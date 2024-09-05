@@ -1,0 +1,86 @@
+<!-- Note Not Designed For Mobile Use At The Moment -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="/css/home.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="/javascript/home.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Express Demo</title>
+    </head>
+    <body>
+        <header>Express Photo Gallery</header>
+        <div>
+            <section id="headbar">
+                <label style="padding-right: 4px">Filter: </label><input id="filter" type="text">
+                <label style="padding-left: 10px"></label>
+                <button id="clear">Clear</button>
+                
+                <label class="seperate">Sort by:</label>
+                <select id="sortby">
+                    <option value="alpha" default>Alphabetical A-Z</option>
+                    <option value="alpha re">Alphabetical Z-A</option>
+                    <option value="date new">Newest Added</option>
+                    <option value="date old">Oldest Added</option>
+                </select>
+            </section>
+            <!--jpg|jpeg|png|gif-->
+            <section id="popup">
+                <button id="downloadButton">Download</button>
+                <button id="closeButton">Close</button>
+                <img src="" id="popup-image">
+                <p id="image-desc"></p>
+            </section>
+
+            <section id="uploadPopup">
+                <aside class="fileUpload">
+                    <div class="uploadHeader">
+                        <p style="color: black; font-size: 20px; margin-top: 0;">Upload File(s)</p>
+                        <button id="closeModal" class="material-icons closeButton">close</button>
+                    </div>
+                    <p style="color: black; margin-top: 0;">File Types Allowed: .JPG/.JPEG/.PNG/.GIF and 50 MB Max per File.</p>
+                    <!--Fix Form Upload Giving Error UnHidden for the time being until it is fixed-->
+                    <!-- <form id="uploadForm" action="/upload-images/images" method="POST" enctype="multipart/form-data" onsubmit="return retrieveFiles()">
+                        <input type="file" name="fileInput" id="fileInput">
+                        <button type="submit" id="uploadFiles">Upload Files</button>
+                    </form>  -->
+                    <div id="uploadForm">
+                        <input type="file" name="fileInput" id="fileInput" multiple>
+                        <!-- <button id="uploadFiles">Upload Files</button> -->
+                    </div>
+                    <div id="upload">
+                        <i class="material-icons upload-drop" style="font-size: 45px;">cloud_upload</i>
+                        <p class="upload-drop" style="color: black;">Drag and Drop a File Here</p>
+                        <p class="upload-drop" id="uploadLink">You can also upload by clicking here!</p>
+                        <div id="uploadList">
+
+                        </div>
+                    </div>
+                    <div id="uploadControl">
+                        <button id="confirmUpload">Ok</button>
+                        <!--<button id="cancelUpload">Cancel</button>-->
+                    </div>
+                    <!--<input type="file">-->
+                </aside>
+            </section>
+
+            <aside id="tiles">
+
+            </aside>
+            <section id="imageSelect">
+                <!-- <label>Showing 30: </label> -->
+                <button id="previous">Prev</button>
+                <p class="break"></p>
+                <button id="next">Next</button>
+            </section>
+            <section>
+                <button id="testTable">Test</button>
+                <button id="testDownload">Download</button>
+                <aside id="Tabletest"></aside>
+            </section>
+        </div>
+    </body>
+</html>
