@@ -1,19 +1,20 @@
 html {
     /*background-image: linear-gradient(to bottom right, blue, purple);
     background-repeat: no-repeat; */
-    background-size: 100%; /* or 100% */
+    /* background-size: 100%; /* or 100% */
     background-color: rgb(38, 38, 38);
     color: whitesmoke;
 }
+/*
 header {
-    /* background-image: linear-gradient(to right, rgb(21, 106, 108), rgb(6, 128, 0)); */
+    /* background-image: linear-gradient(to right, rgb(21, 106, 108), rgb(6, 128, 0)); 
     background-color: #888;
     text-align: center;
-    width: 90%;
+    /*width: 90%;
     height: 30px;
     padding-top: 15px;
     font-size: 20px;
-}
+} */
 div {
     color: whitesmoke;
 }
@@ -23,8 +24,33 @@ a:link {
     background-color: transparent;
     text-decoration: none;
 }
+.headbar {
+    overflow: hidden;
+    text-align: center;
+    border: 1px solid black;
+    background-color: #888;  
+}
 
-#headbar {
+.headbar a {
+    display: inline-block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.headbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+  
+.headbar a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+
+.modify-content {
     display: flex;
     padding-top: 50px;
     justify-content: center;
@@ -35,18 +61,17 @@ a:link {
     padding-right: 4px;
 }
 
-
 #imageSelect {
     display: flex;
     padding-top: 15px;
     justify-content: center; /* Center horizontally */
-    margin: 0; /* Remove default margin */
+    margin: 0; 
 }
 .break {
     padding-right: 15px;
 }
 
-/* This is the class for all images */
+/* This is the class for all images CHANGE THE CLASS TO REFLECT USAGE */
 .test { 
     border-color: black;
     border-style: solid;

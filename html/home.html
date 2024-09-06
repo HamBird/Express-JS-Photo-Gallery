@@ -12,13 +12,18 @@
         <title>Express Demo</title>
     </head>
     <body>
-        <header>Express Photo Gallery</header>
+        <div class="headbar">
+            <a href="javascript:void(0)" class="tabbuttons">Grid View</a>
+            <a href="javascript:void(0)" class="tabbuttons">List View</a>
+            <a href="javascript:void(0)" class="tabbuttons">Upload</a>
+        </div>
+
         <div>
-            <section id="headbar">
+            <section class="modify-content">
                 <label style="padding-right: 4px">Filter: </label><input id="filter" type="text">
-                <label style="padding-left: 10px"></label>
+            <!-- Figure out the purpose for this line --><label style="padding-left: 10px"></label>
                 <button id="clear">Clear</button>
-                
+
                 <label class="seperate">Sort by:</label>
                 <select id="sortby">
                     <option value="alpha" default>Alphabetical A-Z</option>
@@ -27,7 +32,7 @@
                     <option value="date old">Oldest Added</option>
                 </select>
             </section>
-            <!--jpg|jpeg|png|gif-->
+
             <section id="popup">
                 <button id="downloadButton">Download</button>
                 <button id="closeButton">Close</button>
@@ -42,14 +47,8 @@
                         <button id="closeModal" class="material-icons closeButton">close</button>
                     </div>
                     <p style="color: black; margin-top: 0;">File Types Allowed: .JPG/.JPEG/.PNG/.GIF and 50 MB Max per File.</p>
-                    <!--Fix Form Upload Giving Error UnHidden for the time being until it is fixed-->
-                    <!-- <form id="uploadForm" action="/upload-images/images" method="POST" enctype="multipart/form-data" onsubmit="return retrieveFiles()">
-                        <input type="file" name="fileInput" id="fileInput">
-                        <button type="submit" id="uploadFiles">Upload Files</button>
-                    </form>  -->
                     <div id="uploadForm">
                         <input type="file" name="fileInput" id="fileInput" multiple>
-                        <!-- <button id="uploadFiles">Upload Files</button> -->
                     </div>
                     <div id="upload">
                         <i class="material-icons upload-drop" style="font-size: 45px;">cloud_upload</i>
@@ -63,19 +62,17 @@
                         <button id="confirmUpload">Ok</button>
                         <!--<button id="cancelUpload">Cancel</button>-->
                     </div>
-                    <!--<input type="file">-->
                 </aside>
             </section>
 
-            <aside id="tiles">
+            <aside id="tiles"></aside>
 
-            </aside>
             <section id="imageSelect">
-                <!-- <label>Showing 30: </label> -->
                 <button id="previous">Prev</button>
                 <p class="break"></p>
                 <button id="next">Next</button>
             </section>
+
             <section>
                 <button id="testTable">Test</button>
                 <button id="testDownload">Download</button>
