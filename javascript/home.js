@@ -23,27 +23,34 @@ let images = [];
 let sortedImages = [];
 
 $(document).ready(function() {
-    console.log("Clientside Booted Up!");
+    //console.log("Clientside Booted Up!");
+    // Retrieves images and displays the image tiles
     loadImages();
-    // for(let x = 1; x <= 30; x++) {
-    //     createTile(x);
-    // }
+    
+    // allows for scrolling backwards to see previous tiles
     $('#previous').click(function() {
+        // determines if scrolling is valid, and moves the start back by the set tile count
+
+        // Think about implementing the start and end in the function instead?
         if(start != 0)
         {
             start -= tileCount;
             end -= tileCount;   
         }
 
-        if($("#filter").val().toLowerCase().trim() != '')
+        // if the trimmed filter is not blank, filter the images to match the input with the start and end
+        if($("#filter").val().trim() != '')
         {
-            searchImages(sortedImages.filter(str => str.toLowerCase().includes($("#filter").val().toLowerCase().trim())));
+            const filter = $("#filter").val().toLowerCase().trim();
+            searchImages(sortedImages.filter(str => str.toLowerCase().includes(filter)));
         }
+        // otherwise redisplay the images with new start and end
         else 
         {
             displayImage();
         }
     });
+
     $('#next').click(function() {
         if(end < images.length) {
             start += tileCount;
@@ -52,7 +59,8 @@ $(document).ready(function() {
         
         if($("#filter").val().toLowerCase().trim() != '')
         {
-            searchImages(sortedImages.filter(str => str.toLowerCase().includes($("#filter").val().toLowerCase().trim())));
+            const filter = $("#filter").val().toLowerCase().trim();
+            searchImages(sortedImages.filter(str => str.toLowerCase().includes(filter)));
         }
         else 
         {
@@ -101,12 +109,19 @@ $(document).ready(function() {
     $("#filter").on('input', function() {
         console.log($("#filter").val());
         
+        // Reset start parameters back to default
         start = 0;
+        end = tileCount;
+
         searchImages(sortedImages.filter(str => str.toLowerCase().includes($("#filter").val().toLowerCase().trim())));
     });
     $("#clear").click(function() {
         console.log("Clear Search");
         $("#filter").val('');
+
+        // Reset start parameters back to default
+        start = 0;
+        end = tileCount;
         displayImage();
     });
     
@@ -115,12 +130,13 @@ $(document).ready(function() {
 
     $("#downloadButton").click(downloadImage);
 
+    /*
     $("#testTable").on('click', function() {
         createFileTable(images.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
         const table = $("#imageList");
         table.attr("data-sortby", "Name");
         table.attr("data-sortdir", "asc");
-    });
+    }); */
 
     $("#testDownload").on('click', function() {
         const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
@@ -144,18 +160,8 @@ $(document).ready(function() {
         event.preventDefault();
         upload.style.background = "White";
         
-        console.log(event);
-
-        const file = event.dataTransfer.files;
-        document.getElementById("fileInput").files = file;
-        // var validatedFiles = validateFiles(file);
-
-        // if(validatedFiles !== undefined) {
-        //     console.log(validatedFiles);
-        //     uploadImages(validatedFiles);
-        // }
+        document.getElementById("fileInput").files = event.dataTransfer.files;
         listUploadedFiles(file);
-        console.log(document.getElementById("fileInput").files);
     });
 
     document.getElementById("uploadLink").addEventListener('click', (event) => {
@@ -169,6 +175,10 @@ $(document).ready(function() {
 
     // Close Upload Modal
     const uploadModal = document.getElementById("uploadPopup");
+
+    // Onload, hide the upload modal
+    $("#uploadPopup").hide();
+
     window.onclick = function(event) {
         if (event.target == uploadModal) {
             closeUploadModal();
@@ -176,21 +186,59 @@ $(document).ready(function() {
     }
     $("#closeModal").click(closeUploadModal);
     document.getElementById("confirmUpload").addEventListener('click', (event) => {
-        // const files = document.getElementById("fileInput").files;
-        // console.log(files);
-        // if(files.length !== 0 && files) {
-        //     retrieveFiles();
-        // }
-        // else {
-        //     closeUploadModal();
-        // }
         if(!retrieveFiles()) {
             closeUploadModal();
         }
     }); 
+
+
+
     // Unused
     //$("#cancelUpload").click(closeUploadModal);
 })
+
+function generateGridView() {
+    // Hide elements related to Grid View
+    $("#file-table").hide();
+    $("#file-table").html("");
+
+    // Show elements related to List View
+    $("#tiles").show();
+    $("#sortby").show();
+    $(".seperate").show(); 
+    $("#imageSelect").show();
+
+    // Resets the start and end parameters to default
+    start = 0;
+    end = tileCount;
+
+    // Generates the tiles
+    loadImages();
+}
+
+function generateListView() {
+    // Hide elements related to Grid View
+    $("#tiles").hide();
+    $("#tites").html("");
+
+    $("#sortby").hide();
+    $(".seperate").hide(); 
+    $("#imageSelect").hide();
+
+    // Show elements related to List View
+    $("#file-table").show();
+
+    // Creates the file Table
+    createFileTable(images.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
+    const table = $("#imageList");
+    table.attr("data-sortby", "Name");
+    table.attr("data-sortdir", "asc");
+}
+
+function openUploadModal() {
+    $("#uploadPopup").show();
+    console.log("Pressed");
+}
 
 function listUploadedFiles(files) {
     const fileList = document.getElementById("uploadList");
@@ -271,7 +319,6 @@ function validateFiles(file) {
     return imagesData;
 }
 function retrieveFiles() {
-    //console.log(this);
     const filesGiven = document.getElementById("fileInput");
     var validatedFiles = validateFiles(filesGiven.files);
     console.log(validatedFiles);
@@ -284,6 +331,7 @@ function retrieveFiles() {
 }
 
 function createTile(data) {
+    // change the class to reflect on actual usage
     let tile = `<div class="test">${data}</div>`;
     $("#tiles").append(tile);
 }
@@ -294,7 +342,6 @@ async function loadImages() {
         images = await response.json();
         sortedImages = images.map(e => e.name);
         displayImage();
-        console.log(images);
     }
     catch (error) {
         console.error("Error fetching images:", error);
@@ -419,18 +466,17 @@ async function downloadMultipleImages(images) {
     });
 }
 
-function uploadImages(uploadImages) {
-    console.log(uploadImages);
+function uploadImages(images) {
+    console.log(images);
     const data = new FormData();
 
-    for (const file of uploadImages) {
+    for (const file of images) {
         data.append("file", file);
     }
     console.log(...data);
     const response = fetch('/upload-images/images', {
         method: 'POST',
-        //headers: { 'Content-Type': 'application/json' },
-        body: data,//JSON.stringify(uploadImages),
+        body: data,
     });
 
     response.then(res => res.json()).then(data => console.log(data));
@@ -512,13 +558,14 @@ function createFileTable(fileData) {
         tableRow.append(tableData);
     }
 
-    $("#Tabletest").append(table);
-    console.log(table);
+    $("#file-table").append(table);
+    //console.log(table);
 
     createSubscribtions();
 }
 
 // Subscribe to all related functions for the table
+// CHANGE FUNCTION NAME TO REFLECT PURPOSE
 function createSubscribtions() {
     // create subscription to either select all or unselect all
     $("#selectall").click(function() {
@@ -664,10 +711,10 @@ function retrieveDataFromTable() {
 
 // Retrieve file type
 function getFileType(fileName) {
-    // Get the file extension
+    // Retrieves file type
     const extension = fileName.split('.').pop().toLowerCase();
   
-    // Define a mapping of common image file extensions to MIME types
+    // Defines file extensions to MIME types 
     const mimeTypes = {
       'jpg': 'Image JPEG',
       'jpeg': 'Image JPEG',
@@ -675,7 +722,7 @@ function getFileType(fileName) {
       'gif': 'Image GIF',
     };
   
-    // Get the MIME type from the mapping
+    // Retrieve the MIME type
     const mimeType = mimeTypes[extension] || 'unknown';
   
     return mimeType;
