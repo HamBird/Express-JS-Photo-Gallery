@@ -3,6 +3,7 @@ This project is to explore how Express interacts with the client-side and to imp
 
 # TODO
 - Add in functionality to the delete button in List View
+- Check server checks for valid file types
 - Implement effective responsive UI
 - Re-read old code to remove or improve
 - Rename vague variable/class/ID names
