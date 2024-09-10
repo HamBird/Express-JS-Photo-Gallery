@@ -25,7 +25,7 @@ let sortedImages = [];
 $(document).ready(function() {
     //console.log("Clientside Booted Up!");
     // Retrieves images and displays the image tiles
-    loadImages();
+    generateGridView();
     
     // allows for scrolling backwards to see previous tiles
     $('#previous').click(function() {
@@ -138,12 +138,6 @@ $(document).ready(function() {
         table.attr("data-sortdir", "asc");
     }); */
 
-    $("#testDownload").on('click', function() {
-        const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
-        console.log(checkedImages);
-        downloadMultipleImages(checkedImages);
-    });
-
     // Need to fix drag and drop background
     const upload = document.getElementById("upload");
     upload.addEventListener('dragover', (event) => {
@@ -197,9 +191,16 @@ $(document).ready(function() {
     //$("#cancelUpload").click(closeUploadModal);
 })
 
+function downloadImages() {
+    const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
+    console.log(checkedImages);
+    downloadMultipleImages(checkedImages);
+}
+
 function generateGridView() {
     // Hide elements related to Grid View
     $("#file-table").hide();
+    $("#file-actions").hide();
     $("#file-table").html("");
 
     // Show elements related to List View
@@ -227,6 +228,7 @@ function generateListView() {
 
     // Show elements related to List View
     $("#file-table").show();
+    $("#file-actions").show();
 
     // Creates the file Table
     createFileTable(images.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));

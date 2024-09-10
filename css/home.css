@@ -20,8 +20,6 @@ div {
 }
 
 a:link {
-    color: whitesmoke;
-    background-color: transparent;
     text-decoration: none;
 }
 .headbar {
@@ -105,6 +103,25 @@ a:link {
 
     overflow-y: auto;
     overflow-x: auto;
+}
+
+.table-btns {
+    border: 2px solid black;
+    background-color: white;
+    color: black;
+    padding: 2px 5px;
+    font-size: 5%;
+}
+.table-btns:hover {
+
+}
+.table-btns:active {
+
+}
+
+#file-actions {
+    margin-top: 2px;
+    margin-left: 5px;
 }
 
 /* ------------------------------------------------------------------------------------------------------------*/
