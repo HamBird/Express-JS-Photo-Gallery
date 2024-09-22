@@ -1,21 +1,3 @@
-/* -----------------------------------------------------------------------------------------------------------------------------------------------------------
-In this multiline comment block:
-// - means WIP
-/// - means finished or will update in the future
-//// - means partially finished, will either edit or leave alone.
-
-/// Sort images gathered by either last added, or in alphabetical order in either forward or reverse.
-//// build a filtering to only grab the images that have the same name, excluding the extension i.e (png, jpg, jpeg) etc.
-
-/// figure out an effective way to display the image and the name so user can figure out what image is which
-
-/// figure out how to 'preview' an image, for example if you click the image, show an enlarged version.
-
-/// Allow User to download image when shown the enlarged version.
-// Have an alternate method of displaying all the pictures for the user to download multiple images at a time.
---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-// May switch between JQuery and Javascript throughout code as I have more current knowledge in raw Javascript as compared to JQuery.
 let tileCount = 25;
 let start = 0;
 let end = tileCount;
@@ -23,15 +5,14 @@ let images = [];
 let sortedImages = [];
 
 $(document).ready(function() {
-    //console.log("Clientside Booted Up!");
+    // change subscribe events to use vanilla JS rather than JQuery to avoid being inconsistent
+
     // Retrieves images and displays the image tiles
     generateGridView();
     
     // allows for scrolling backwards to see previous tiles
     $('#previous').click(function() {
         // determines if scrolling is valid, and moves the start back by the set tile count
-
-        // Think about implementing the start and end in the function instead?
         if(start != 0)
         {
             start -= tileCount;
@@ -69,7 +50,6 @@ $(document).ready(function() {
     });
 
     $('#sortby').change(function() {
-        console.log($('#sortby').val());
 
         switch ($('#sortby').val()) {
             case "alpha":
@@ -78,14 +58,12 @@ $(document).ready(function() {
                 sortedImages = images.map(x => x.name).toSorted((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
                 // redisplay images
                 displayImage();
-                console.log("Sorted by Alpha");
                 break;
             case "alpha re":
                 // copies list from images to sort in reverse alphabetical order (case-insensitive)
                 sortedImages = images.map(x => x.name).toSorted((a, b) => b.toLowerCase().localeCompare(a.toLowerCase()));
                 // redisplay images
                 displayImage();
-                console.log("Sorted by Reverse Alpha");
                 break;
             case "date new":
                 // copies list from images to sort by newest date
@@ -93,14 +71,12 @@ $(document).ready(function() {
                 console.log(images.toSorted((a, b) => new Date(b.modifiedDate) - new Date(a.modifiedDate)));
                 // redisplay images
                 displayImage();
-                console.log("Sorted by Newest Date");
                 break;
             case "date old":
                 // copies list from images to sort by oldest date
                 sortedImages = images.toSorted((a, b) => new Date(a.modifiedDate) - new Date(b.modifiedDate)).map(x => x.name);
                 // redisplay images
                 displayImage();
-                console.log("Sorted by Oldest Date");
                 break;
         }
         $("#filter").val('');
@@ -130,15 +106,6 @@ $(document).ready(function() {
 
     $("#downloadButton").click(downloadImage);
 
-    /*
-    $("#testTable").on('click', function() {
-        createFileTable(images.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
-        const table = $("#imageList");
-        table.attr("data-sortby", "Name");
-        table.attr("data-sortdir", "asc");
-    }); */
-
-    // Need to fix drag and drop background
     const upload = document.getElementById("upload");
     upload.addEventListener('dragover', (event) => {
         event.preventDefault();
@@ -193,7 +160,6 @@ $(document).ready(function() {
 
 function downloadImages() {
     const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
-    console.log(checkedImages);
     downloadMultipleImages(checkedImages);
 }
 
@@ -239,7 +205,6 @@ function generateListView() {
 
 function openUploadModal() {
     $("#uploadPopup").show();
-    console.log("Pressed");
 }
 
 function listUploadedFiles(files) {
@@ -300,16 +265,14 @@ function closeUploadModal() {
 
 function validateFiles(file) {
     var imagesData = [];
-    var validImage = true;
         
     for(let x = 0; x < file.length; x++) {
+        // replace with a popup dropdown to alert user that image is not valid
         if(!file[x].type.startsWith('image/')) {
-            validImage = false;
             console.log(`File ${file[x].name} is not a valid Image!`);
             return;
         }
         else if(file[x].size == 0) {
-            validImage = false;
             console.log(`File has 0 dimensions ${file[x].name} is not a valid Image!`);
             return;
         }
@@ -323,7 +286,6 @@ function validateFiles(file) {
 function retrieveFiles() {
     const filesGiven = document.getElementById("fileInput");
     var validatedFiles = validateFiles(filesGiven.files);
-    console.log(validatedFiles);
 
     if(validatedFiles && validatedFiles.length !== 0) {
         uploadImages(validatedFiles);
@@ -411,7 +373,6 @@ function searchImages(filteredImages) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Click on images
 function imageClicked() {
-    console.log(this.src);
     $("#popup-image").prop('src', this.src);
     let imageName = this.src.split("/");
     $("#image-desc").html(imageName[imageName.length-1].replaceAll('%20', ' '));
@@ -424,7 +385,6 @@ function hidePopup() {
 
 async function downloadImage() {
     const response = fetch(`/download-image/${$('#image-desc').html()}`);
-    //console.log(response.blob());
 
     response.then(res => res.blob()).then(prom => {
         // Create a link element
@@ -444,7 +404,6 @@ async function downloadImage() {
 }
 
 async function downloadMultipleImages(images) {
-    // const response = fetch(`/download-images/${images}`);
     const response = fetch('/download-images/images', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
@@ -469,26 +428,21 @@ async function downloadMultipleImages(images) {
 }
 
 function uploadImages(images) {
-    console.log(images);
     const data = new FormData();
-
     for (const file of images) {
         data.append("file", file);
     }
-    console.log(...data);
+
     const response = fetch('/upload-images/images', {
         method: 'POST',
         body: data,
     });
-
     response.then(res => res.json()).then(data => console.log(data));
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create a table for scrolling for all images/videos
 
 function createFileTable(fileData) {
-    // sort images by name
-    //let fileData = images.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
     // create table constants
     const table = document.createElement('table');
     const header = document.createElement('thead'); 
@@ -561,7 +515,6 @@ function createFileTable(fileData) {
     }
 
     $("#file-table").append(table);
-    //console.log(table);
 
     createSubscribtions();
 }
@@ -591,7 +544,6 @@ function createSubscribtions() {
 
             var sortedData = dataTable.toSorted((a, b) => a.Name.toLowerCase().localeCompare(b.Name.toLowerCase()));
 
-            console.log("Sorting by Name Ascending");
             constructTableRowsFromData(sortedData);
         }
         else if(table.data('sortby') === "Name" && table.data('sortdir') === "asc") {
@@ -599,7 +551,6 @@ function createSubscribtions() {
 
             var sortedData = dataTable.toSorted((a, b) => b.Name.toLowerCase().localeCompare(a.Name.toLowerCase()));
 
-            console.log("Sorting by Name Descending");
             constructTableRowsFromData(sortedData);
         }
     });
@@ -615,7 +566,6 @@ function createSubscribtions() {
 
             var sortedData = dataTable.toSorted((a, b) => new Date(b['Last Modified']) - new Date(a['Last Modified']));
 
-            console.log("Sorting by Date-Modified Ascending");
             constructTableRowsFromData(sortedData);
         }
         else if(table.data('sortby') === "Modified" && table.data('sortdir') === "asc") {
@@ -623,7 +573,6 @@ function createSubscribtions() {
 
             var sortedData = dataTable.toSorted((a, b) => new Date(a['Last Modified']) - new Date(b['Last Modified']));
 
-            console.log("Sorting by Date-Modified Descending");
             constructTableRowsFromData(sortedData);
         }
     });
@@ -643,7 +592,6 @@ function createSubscribtions() {
                 return Number(firstElem[0]) - Number(secondElem[0]);
             });
 
-            console.log("Sorting by File Size Ascending");
             constructTableRowsFromData(sortedData);
         }
         else if(table.data('sortby') === "Size" && table.data('sortdir') === "asc") {
@@ -655,7 +603,6 @@ function createSubscribtions() {
                 return Number(secondElem[0]) - Number(firstElem[0]);
             });
 
-            console.log("Sorting by File Size Descending");
             constructTableRowsFromData(sortedData);
         }
     });
@@ -665,7 +612,6 @@ function constructTableRowsFromData(tableRows) {
     let tableBody = document.getElementById("imageList").querySelector('tbody');
 
     tableBody.innerHTML = '';
-    //console.log(tableRows);
     tableRows.forEach(cells => {
         let row = document.createElement('tr');
 
@@ -684,10 +630,8 @@ function constructTableRowsFromData(tableRows) {
             tableCell.innerHTML = data;
 
             row.append(tableCell);
-            //console.log(data);
         }
         tableBody.append(row);
-        //console.log(cells);
     });
 }
 
@@ -704,9 +648,6 @@ function retrieveDataFromTable() {
         });
         return data;
     });
-
-    // used to see data result
-    console.log(rowArray);
 
     return rowArray;
 }
