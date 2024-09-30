@@ -158,7 +158,22 @@ $(document).ready(function() {
     //$("#cancelUpload").click(closeUploadModal);
 })
 
-function downloadImages() {
+function deleteCheckedImages() {
+    const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
+
+    console.log(checkedImages);
+    deleteImages(checkedImages);
+}
+
+function deleteImages(images) {
+    const response = fetch('/delete/images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify(images),
+    });
+    //response.then(res => res.json()).then(data => console.log(data));
+}
+function downloadCheckedImages() {
     const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
     downloadMultipleImages(checkedImages);
 }

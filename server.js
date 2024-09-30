@@ -8,29 +8,38 @@ const multer = require('multer');
 
 const app = express();
 
+// const storage = multer.diskStorage({
+//   destination: __dirname + '/files/images',
+//   filename: function (req, file, cb) {
+//     const ext = path.extname(file.originalname);
+//     const baseName = path.basename(file.originalname, ext);
+//     cb(null, generateUniqueName(baseName, ext));
+//   }
+// });
+
 const storage = multer.diskStorage({
-  destination: __dirname + '/files/images',
-  filename: function (req, file, cb) {
+  destination: function (req, file, cb) {
+    cb(null, __dirname + "/files/images")
+  },
+  filename: function(req, file, cb) {
     const ext = path.extname(file.originalname);
     const baseName = path.basename(file.originalname, ext);
     cb(null, generateUniqueName(baseName, ext));
-  }
+  },
 });
-
-const filter = (req, file, cb) => {
-  const mimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-  if(mimeTypes.includes(file.mimetype)) {
-    cb(null, true);
-  }
-  else {
-    cb(res.status(500).json( { error: "Incorrect File Type!" } ));
-  }
-};
 
 //const upload = multer({ dest: __dirname + '/files/uploads', limits: { fileSize: 50 * 1024 * 1024 } });// 50 MB limit for files});
 const upload = multer({
   storage: storage,
-  fileFilter: filter,
+  fileFilter: function(req, file, cb) {
+    const mimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if(mimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    }
+    else {
+      return cb(new Error("Only image files are allowed:"));
+    }
+  },
   limits: { fileSize: 50 * 1024 * 1024 },
 });
 
@@ -141,10 +150,35 @@ app.use((err, req, res, next) => {
   }
 });
 
+app.post('/delete/images', (req, res) => {
+  console.log(req.body);
+  const toBeDeletedImages = req.body;
+  
+  for(var images of toBeDeletedImages) {
+    deleteFile(images);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
   console.log(`App Link: http://localhost:${port}`);
 });
+
+async function deleteFile(imageName) {
+  const filepath = path.join(__dirname, "files", "images", imageName);
+  try{
+    await fs.unlink(filepath, (err) => {
+      if (err) {
+        console.log("Error Deleting File!"); 
+        return;
+      }
+      console.log("File Deleted!");
+    }); 
+  }
+  catch( err ) {
+    console.log(err.message);
+  }
+}
 
 // Check this function to make sure it makes a new name
 function generateUniqueName(filename, extension) {
