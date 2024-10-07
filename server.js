@@ -137,48 +137,59 @@ app.get('/', (req, res) => {
 app.post('/upload-images/images', upload.array("file"), (req, res) => {
   if(req.files && req.files.length !== 0) {
     console.log(req.files);
-    res.json({status: "Files Received"});
+    if(req.files.length > 1) {
+      return res.json({status: `Uploaded ${req.files.length} Files!`});
+    }
+    return res.json({status: `Uploaded ${req.files[0].originalname}!`})
   }
   else {
-    res.status(500).json( { error: "Unable to upload File!" } );
+    return res.json( { error: "Unable to upload File!" } );
   }
 });
 
 app.use((err, req, res, next) => {
   if(err) {
-    res.status(400).send(err.message);
+    // res.status(400).send(err.message);
+    console.log(err.message);
   }
 });
 
-app.post('/delete/images', (req, res) => {
+app.post('/delete/images', async (req, res) => {
   console.log(req.body);
   const toBeDeletedImages = req.body;
-  
-  for(var images of toBeDeletedImages) {
-    deleteFile(images);
+  var filesDeleted = 0;
+
+  if(toBeDeletedImages.length < 1) {
+    return res.json({error: "No files selected!"});
   }
+
+  for(var images of toBeDeletedImages) {
+    filesDeleted += await deleteFile(images);
+  }
+
+  if(toBeDeletedImages.length > 1) {
+    return res.json({status: `Deleted ${filesDeleted} out of ${toBeDeletedImages.length} Files!`});
+  }
+  return res.json({status: `Deleted ${toBeDeletedImages[0]}`});
 });
+
+async function deleteFile(imageName) {
+  const filepath = path.join(__dirname, "files", "images", imageName);
+  try {
+    await fs.promises.unlink(filepath);
+    console.log("File Deleted!");
+    return 1;
+  }
+  catch ( err ) {
+    console.log(err.message);
+    return 0;
+  }
+}
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
   console.log(`App Link: http://localhost:${port}`);
 });
-
-async function deleteFile(imageName) {
-  const filepath = path.join(__dirname, "files", "images", imageName);
-  try{
-    await fs.unlink(filepath, (err) => {
-      if (err) {
-        console.log("Error Deleting File!"); 
-        return;
-      }
-      console.log("File Deleted!");
-    }); 
-  }
-  catch( err ) {
-    console.log(err.message);
-  }
-}
 
 // Check this function to make sure it makes a new name
 function generateUniqueName(filename, extension) {

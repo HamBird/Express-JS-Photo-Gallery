@@ -3,6 +3,8 @@ let start = 0;
 let end = tileCount;
 let images = [];
 let sortedImages = [];
+let isGridActive = false;
+let isListActive = false;
 
 $(document).ready(function() {
     // change subscribe events to use vanilla JS rather than JQuery to avoid being inconsistent
@@ -122,7 +124,7 @@ $(document).ready(function() {
         upload.style.background = "White";
         
         document.getElementById("fileInput").files = event.dataTransfer.files;
-        listUploadedFiles(file);
+        listUploadedFiles(event.dataTransfer.files);
     });
 
     document.getElementById("uploadLink").addEventListener('click', (event) => {
@@ -158,27 +160,73 @@ $(document).ready(function() {
     //$("#cancelUpload").click(closeUploadModal);
 })
 
+function showSnackbar(message = "This is a default message") {
+    // Get the snackbar DIV
+    var snackbar = document.getElementById("snackbar");
+
+    // Add the "show" class to DIV
+    snackbar.className = "show";
+
+    snackbar.innerHTML = message;
+
+    // After 3 seconds, remove the show class from DIV
+    setTimeout(function() {
+        snackbar.className = snackbar.className.replace("show", "");
+    }, 3000);
+}
+
+function closeSnackbar() {
+    // Get the snackbar DIV
+    var snackbar = document.getElementById("snackbar");
+
+    // Immediately remove the "show" class when clicked
+    snackbar.className = snackbar.className.replace("show", "");
+}
+
 function deleteCheckedImages() {
+    showSnackbar();
     const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
+    if(checkedImages.length < 1) {
+        return;
+    }
 
     console.log(checkedImages);
     deleteImages(checkedImages);
 }
 
-function deleteImages(images) {
-    const response = fetch('/delete/images', {
+async function deleteImages(images) {
+    const fetchData = await fetch('/delete/images', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(images),
     });
-    //response.then(res => res.json()).then(data => console.log(data));
+    const response = await fetchData.json();
+    await loadImages(true);
+    
+    if(isGridActive) {
+        generateGridView(true);
+    }
+    else {
+        generateListView(true);
+    }
+
+    showSnackbar(response.status);
+    // });
 }
 function downloadCheckedImages() {
     const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
+    if(checkedImages.length < 1) {
+        return;
+    }
     downloadMultipleImages(checkedImages);
 }
 
-function generateGridView() {
+// the following two functions pose a optimization flaw since everytime the tab is clicked, it potentially re-creates the same content instead of keeping the same content
+function generateGridView(forceRefresh = false) {
+    if(isGridActive && !forceRefresh) {
+        return;
+    }
+
     // Hide elements related to Grid View
     $("#file-table").hide();
     $("#file-actions").hide();
@@ -190,18 +238,29 @@ function generateGridView() {
     $(".seperate").show(); 
     $("#imageSelect").show();
 
+    // clears data in div
+    $("#tiles").html("");
+
     // Resets the start and end parameters to default
     start = 0;
     end = tileCount;
 
     // Generates the tiles
     loadImages();
+
+    // Sets the boolean to show tiles are enabled
+    isListActive = false;
+    isGridActive = true;
 }
 
-function generateListView() {
+function generateListView(forceRefresh = false) {
+    if(isListActive && !forceRefresh) {
+        return;
+    }
+
     // Hide elements related to Grid View
     $("#tiles").hide();
-    $("#tites").html("");
+    $("#tiles").html("");
 
     $("#sortby").hide();
     $(".seperate").hide(); 
@@ -211,11 +270,18 @@ function generateListView() {
     $("#file-table").show();
     $("#file-actions").show();
 
+    // clears data in div
+    $("#file-table").html("");
+
     // Creates the file Table
     createFileTable(images.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
     const table = $("#imageList");
     table.attr("data-sortby", "Name");
     table.attr("data-sortdir", "asc");
+
+    // Sets the boolean to show tiles are disabled
+    isListActive = true;
+    isGridActive = false;
 }
 
 function openUploadModal() {
@@ -276,6 +342,9 @@ function listUploadedFiles(files) {
 
 function closeUploadModal() {
     $("#uploadPopup").hide();
+    document.getElementById("fileInput").value = "";
+    document.getElementById("uploadList").innerHTML = "";
+    $(".upload-drop").show();
 }
 
 function validateFiles(file) {
@@ -304,6 +373,7 @@ function retrieveFiles() {
 
     if(validatedFiles && validatedFiles.length !== 0) {
         uploadImages(validatedFiles);
+        closeUploadModal();
         return true;
     }
     return false;
@@ -315,12 +385,14 @@ function createTile(data) {
     $("#tiles").append(tile);
 }
 
-async function loadImages() {
+async function loadImages(reloadImages = false) {
     try {
         const response = await fetch('/images');
         images = await response.json();
         sortedImages = images.map(e => e.name);
-        displayImage();
+        if(!reloadImages) {
+            displayImage();
+        }
     }
     catch (error) {
         console.error("Error fetching images:", error);
@@ -442,17 +514,32 @@ async function downloadMultipleImages(images) {
     });
 }
 
-function uploadImages(images) {
+async function uploadImages(images) {
     const data = new FormData();
     for (const file of images) {
         data.append("file", file);
     }
 
-    const response = fetch('/upload-images/images', {
+    const fetchData = await fetch('/upload-images/images', {
         method: 'POST',
         body: data,
     });
-    response.then(res => res.json()).then(data => console.log(data));
+    const response = await fetchData.json();
+    if(response.error !== undefined) {
+        showSnackbar(response.error);
+        return;
+    }
+
+    await loadImages(true);
+
+    if(isGridActive) {
+        generateGridView(true);
+    }
+    else {
+        generateListView(true);
+    }
+
+    showSnackbar(response.status);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create a table for scrolling for all images/videos
