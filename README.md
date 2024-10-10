@@ -1,9 +1,10 @@
 # Express JS Photo Gallery
 This project is to explore how Express interacts with the client-side and to improve client-side skills.
 
+# This project uses the items below
+* JQuery
+* Material Icons
+
 # TODO
-- Add in functionality to the delete button in List View
 - Check server checks for valid file types
-- Implement effective responsive UI
-- Re-read old code to remove or improve
-- Rename vague variable/class/ID names
+
