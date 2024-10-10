@@ -52,11 +52,12 @@
                         <button id="closeModal" class="material-icons closeButton">close</button>
                     </div>
                     <p style="color: black; margin-top: 0;">File Types Allowed: .JPG/.JPEG/.PNG/.GIF and 50 MB Max per File.</p>
+                    <a href="javascript:void(0)" id="mobile-upload">Upload Files</a>
                     <div id="uploadForm">
                         <input type="file" name="fileInput" id="fileInput" accept=".jpg, .jpeg, .png, .gif" multiple>
                     </div>
                     <div id="upload">
-                        <i class="material-icons upload-drop" style="font-size: 45px;">cloud_upload</i>
+                        <i class="upload-drop material-icons" id="upload-icon" style="font-size: 45px;">cloud_upload</i>
                         <p class="upload-drop" style="color: black;">Drag and Drop a File Here</p>
                         <p class="upload-drop" id="uploadLink">You can also upload by clicking here!</p>
                         <div id="uploadList"></div>

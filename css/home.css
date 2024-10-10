@@ -234,6 +234,9 @@ th:hover {
     width: 100%;
     height: 23vh;
 }
+#mobile-upload {
+    display: none;
+}
 #uploadForm {
     display: none;
     background-color: white;
@@ -391,6 +394,8 @@ th:hover {
     }
     #tiles {
         grid-template-columns: repeat(5, 1fr);
+        height: 65vh;
+        overflow: auto;
     }
     .seperate {
         padding-left: 10px;
@@ -429,5 +434,28 @@ th:hover {
     }
     .fileItem {
         height: 8px;
+    }
+    #previous {
+        display: none;
+    }
+    #next {
+        display: none;
+    }
+    .upload-drop {
+        display: none;
+    }
+    #upload-icon {
+        display: none;
+    }
+    #mobile-upload {
+        display: block;
+        text-decoration: none;
+        color: black;
+        background-color: #f3f3f3;
+        border: 1px solid black;
+        width: 90px;
+        padding-left: 5px;
+        height: 20px;
+        margin-bottom: 8px;
     }
 }

@@ -137,6 +137,10 @@ $(document).ready(function() {
         document.getElementById('fileInput').click();
     });
 
+    document.getElementById("mobile-upload").addEventListener('click', (event) => {
+        document.getElementById('fileInput').click();
+    });
+
     // checks if the files inputted change to reflect on UI
     document.getElementById('fileInput').addEventListener("change", (event) => {
         listUploadedFiles(document.getElementById("fileInput").files);
@@ -347,7 +351,7 @@ function listUploadedFiles(files) {
             document.getElementById("fileInput").files = dataTransfer.files;
             item.remove();
             
-            if(document.getElementById("fileInput").files.length === 0) {
+            if(document.getElementById("fileInput").files.length === 0 && !isDeviceMobile()) {
                 $(".upload-drop").show();
             }
         };
@@ -364,7 +368,13 @@ function closeUploadModal() {
     $("#uploadPopup").hide();
     document.getElementById("fileInput").value = "";
     document.getElementById("uploadList").innerHTML = "";
-    $(".upload-drop").show();
+    //$(".upload-drop").show();
+    if(isDeviceMobile()) {
+        $(".upload-drop").hide();
+    }
+    else {
+        $(".upload-drop").show();
+    }
 }
 
 function validateFiles(file) {
@@ -423,8 +433,14 @@ async function loadImages(reloadImages = false) {
 function displayImage() {
     const tileHolder = $("#tiles");
     tileHolder.empty();
+    let imagesDisplayed = [];
 
-    let imagesDisplayed = sortedImages.slice(start, end);
+    if(isDeviceMobile) {
+        imagesDisplayed = sortedImages;
+    }
+    else {
+        imagesDisplayed = sortedImages.slice(start, end);
+    }
 
     imagesDisplayed.forEach(element => {
         const newDiv = document.createElement('div');
@@ -452,8 +468,14 @@ function displayImage() {
 function searchImages(filteredImages) {
     const tileHolder = $("#tiles");
     tileHolder.empty();
+    let imagesDisplayed = [];
 
-    let imagesDisplayed = filteredImages.slice(start, end);
+    if(isDeviceMobile) {
+        imagesDisplayed = filteredImages;
+    }
+    else {
+        imagesDisplayed = filteredImages.slice(start, end);
+    }
 
     imagesDisplayed.forEach(element => {
         const newDiv = document.createElement('div');
