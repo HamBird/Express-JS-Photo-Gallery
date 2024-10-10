@@ -12,7 +12,7 @@
         <title>Photo Gallery</title>
     </head>
     <body>
-        <div class="headbar">
+        <div class="headbar" id="head-navbar">
             <a href="javascript:void(0)" class="tabbuttons" onclick="generateGridView()">Grid View</a>
             <a href="javascript:void(0)" class="tabbuttons" onclick="generateListView()">List View</a>
             <a href="javascript:void(0)" class="tabbuttons" onclick="openUploadModal()">Upload</a>
@@ -22,10 +22,7 @@
             <div id="snackbar" onclick="closeSnackbar()">This is a snackbar message!</div>
             <span class="modify-content">
                 <label style="padding-right: 4px">Filter: </label><input id="filter" type="text">
-            <!-- Figure out the purpose for this line --><label style="padding-left: 10px"></label>
                 <button id="clear">Clear</button>
-
-                <!-- Add Buttons Here For Downloading and Deleting? (List View) -->
                 <span id="file-actions">
                     <a href="javascript:void(0)" class="material-icons table-btns" onclick="downloadCheckedImages()">download</a>
                     <a href="javascript:void(0)" class="material-icons table-btns" onclick="deleteCheckedImages()">delete</a>
@@ -41,8 +38,9 @@
             </span>
 
             <section id="popup">
-                <button id="downloadButton">Download</button>
-                <button id="closeButton">Close</button>
+                <button class="material-icons" id="deleteButton">delete</button>
+                <button class="material-icons" id="downloadButton">download</button>
+                <button class="material-icons" id="closeButton">close</button>
                 <img src="" id="popup-image">
                 <p id="image-desc"></p>
             </section>
@@ -55,19 +53,16 @@
                     </div>
                     <p style="color: black; margin-top: 0;">File Types Allowed: .JPG/.JPEG/.PNG/.GIF and 50 MB Max per File.</p>
                     <div id="uploadForm">
-                        <input type="file" name="fileInput" id="fileInput" multiple>
+                        <input type="file" name="fileInput" id="fileInput" accept=".jpg, .jpeg, .png, .gif" multiple>
                     </div>
                     <div id="upload">
                         <i class="material-icons upload-drop" style="font-size: 45px;">cloud_upload</i>
                         <p class="upload-drop" style="color: black;">Drag and Drop a File Here</p>
                         <p class="upload-drop" id="uploadLink">You can also upload by clicking here!</p>
-                        <div id="uploadList">
-
-                        </div>
+                        <div id="uploadList"></div>
                     </div>
                     <div id="uploadControl">
                         <a href="javascript:void(0)" id="confirmUpload">Ok</a>
-                        <!--<button id="cancelUpload">Cancel</button>-->
                     </div>
                 </aside>
             </section>
@@ -78,7 +73,6 @@
 
             <span id="imageSelect">
                 <button id="previous">Prev</button>
-                <p class="break"></p>
                 <button id="next">Next</button>
             </span>
         </div>

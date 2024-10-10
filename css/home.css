@@ -1,20 +1,10 @@
 html {
-    /*background-image: linear-gradient(to bottom right, blue, purple);
-    background-repeat: no-repeat; */
-    /* background-size: 100%; /* or 100% */
     background-color: rgb(38, 38, 38);
     color: whitesmoke;
 }
-/*
-header {
-    /* background-image: linear-gradient(to right, rgb(21, 106, 108), rgb(6, 128, 0)); 
-    background-color: #888;
-    text-align: center;
-    /*width: 90%;
-    height: 30px;
-    padding-top: 15px;
-    font-size: 20px;
-} */
+body {
+    margin: 0px 0px 0px 0px
+}
 div {
     color: whitesmoke;
 }
@@ -37,7 +27,9 @@ a:link {
     text-decoration: none;
     font-size: 17px;
 }
-
+#navbar-icon {
+    display: none;
+}
 .headbar a:hover {
     background-color: #a9a7a7;
     color: black;
@@ -65,17 +57,21 @@ a:link {
     justify-content: center; /* Center horizontally */
     margin: 0; 
 }
-.break {
-    padding-right: 15px;
+#previous {
+    margin-right: 15px;
 }
 
 /* This is the class for all images CHANGE THE CLASS TO REFLECT USAGE */
-.test { 
+.tile-picture { 
     border-color: black;
     border-style: solid;
-    width: 150px;
-    height: 150px;
+    /* width: 150px;
+    height: 150px; */
+    width: 100%;
+    height: 75%;
     text-align: center;
+    object-fit: cover;       /* Ensure the image covers the container without stretching */
+    object-position: center; /* Ensure the center of the image is shown */
      /* padding: 23px; */
 }
 .tile {
@@ -87,8 +83,6 @@ a:link {
     text-overflow: ellipsis; /* Add ellipsis for overflow content */
 }
 #tiles {
-    border-color: black;
-    border-style: solid;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
@@ -97,12 +91,15 @@ a:link {
     margin: auto;
 }
 
+#clear {
+    margin-left: 10px;
+}
+
 #file-table {
     display: flex;
     justify-content: center;
-
-    overflow-y: auto;
-    overflow-x: auto;
+    overflow: auto;  
+    height: 80vh;
 }
 
 .table-btns {
@@ -110,13 +107,35 @@ a:link {
     background-color: white;
     color: black;
     padding: 2px 5px;
-    font-size: 5%;
 }
 .table-btns:hover {
-
+    background-color: rgb(214, 214, 214);
 }
 .table-btns:active {
+    background-color: rgb(180, 180, 180);
+}
 
+table {
+    border-collapse: collapse; /* Prevent double borders between cells */
+    overflow-y: auto;           /* Enable vertical scrolling */
+}
+
+tr:hover {
+    background-color: rgb(60, 60, 60);
+}
+
+th, td {
+    padding: 8px 13px; /* Add padding inside the cells */
+}
+
+th input {
+    height: 15px;
+    width: 15px;
+}
+
+td input {
+    height: 15px;
+    width: 15px;
 }
 
 #file-actions {
@@ -129,11 +148,12 @@ a:link {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 30px;
+    font-size: 50px;
     color: black;
 }
 #image-desc {
     position: absolute;
+    text-align: center;
     bottom: 10px;
     font-size: 20px;
     color: white;
@@ -142,8 +162,16 @@ a:link {
 #downloadButton {
     position: absolute;
     top: 20px;
-    right: 9pc;
-    font-size: 30px;
+    right: 6pc;
+    font-size: 50px;
+    color: black;
+}
+
+#deleteButton {
+    position: absolute;
+    top: 20px;
+    right: 172px;
+    font-size: 50px;
     color: black;
 }
 
@@ -158,7 +186,7 @@ th:hover {
     color: black;
 }
 #popup {
-    display: flex; /* Hidden by default */
+    display: none; /* Hidden by default */
     position: fixed;
     top: 0;
     left: 0;
@@ -173,7 +201,7 @@ th:hover {
     max-height: 80%;
 }
 #uploadPopup {
-    display: block;
+    display: none;
     position: fixed;
     z-index: 1;
     left: 0;
@@ -250,21 +278,6 @@ th:hover {
 #confirmUpload:active {
     background-color: rgb(114, 175, 244);
 }
-
-/* Unused
-#cancelUpload {
-    padding: 5px 20px;
-    font-size: 17px;
-    border-radius: 5px;
-    background-color: red;
-    color: white;
-}
-#cancelUpload:hover {
-    background-color: rgb(249, 89, 89);
-}
-#cancelUpload:active {
-    background-color: rgb(255, 113, 113);
-}*/
 
 #uploadLink {
     text-decoration: underline; 
@@ -368,3 +381,53 @@ th:hover {
     from {top: 15px; opacity: 1;}
     to {top: 0; opacity: 0;}
   }
+
+/* CSS for Mobile View */
+@media (max-width: 800px) {
+    .tile {
+        width: 60px;
+        height: 80px;
+        font-size: 8px;
+    }
+    #tiles {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .seperate {
+        padding-left: 10px;
+    }
+    .modify-content label {
+        font-size: 10px;
+        margin-top: 5px;
+    }
+    #filter {
+        width: 85px;
+    }
+    #sortby {
+        width: 120px;
+    }
+    table {
+        font-size: 7px;
+    }
+    th, td {
+        padding: 4px 4px; /* Add padding inside the cells */
+    }
+    #file-table {
+        height: 65vh;
+    }
+    .fileUpload {
+        margin: 5% auto;
+        width: 40vh;
+        /* height: 60vh; */
+    }
+    #upload {
+        height: 60vh;
+    }
+    .fileName {
+        text-wrap: nowrap;
+        overflow-x: auto;
+        width: 43%;
+    }
+    .fileItem {
+        height: 8px;
+    }
+}

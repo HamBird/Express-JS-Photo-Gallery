@@ -8,6 +8,7 @@ let isListActive = false;
 
 $(document).ready(function() {
     // change subscribe events to use vanilla JS rather than JQuery to avoid being inconsistent
+    document.getElementById("tiles").style.gridTemplateRows = `repeat(${tileCount/5}, 1fr)`;
 
     // Retrieves images and displays the image tiles
     generateGridView();
@@ -108,6 +109,11 @@ $(document).ready(function() {
 
     $("#downloadButton").click(downloadImage);
 
+    $("#deleteButton").on('click', function() {
+        deleteImages( [$("#image-desc").html()] );
+        hidePopup();
+    });
+
     const upload = document.getElementById("upload");
     upload.addEventListener('dragover', (event) => {
         event.preventDefault();
@@ -153,11 +159,6 @@ $(document).ready(function() {
             closeUploadModal();
         }
     }); 
-
-
-
-    // Unused
-    //$("#cancelUpload").click(closeUploadModal);
 })
 
 function showSnackbar(message = "This is a default message") {
@@ -184,7 +185,6 @@ function closeSnackbar() {
 }
 
 function deleteCheckedImages() {
-    showSnackbar();
     const checkedImages = Array.from(document.querySelectorAll(".checkData:checked")).map(x => x.id);
     if(checkedImages.length < 1) {
         return;
@@ -245,6 +245,19 @@ function generateGridView(forceRefresh = false) {
     start = 0;
     end = tileCount;
 
+    // Formats the filter text box
+    document.getElementById("filter").style.height = "auto";
+    document.getElementById("filter").style.marginTop = "0px";
+
+    // checks if the screen width is smaller than 800px to give formatting based on screen type
+    if(isDeviceMobile()) {
+        document.querySelector(".modify-content").querySelector("label").style.marginTop = "5px";
+        document.getElementById("filter").style.width = "85px";
+    }
+    else {
+        document.querySelector(".modify-content").querySelector("label").style.marginTop = "0px";
+    }
+
     // Generates the tiles
     loadImages();
 
@@ -273,6 +286,19 @@ function generateListView(forceRefresh = false) {
     // clears data in div
     $("#file-table").html("");
 
+    // Formats the filter text box
+    document.getElementById("filter").style.height = "15px";
+    document.getElementById("filter").style.marginTop = "7px";
+
+    // checks if the screen width is smaller than 800px to give formatting based on screen type
+    if(isDeviceMobile()) {
+        document.querySelector(".modify-content").querySelector("label").style.marginTop = "11px";
+        document.getElementById("filter").style.width = "130px";
+    }
+    else {
+        document.querySelector(".modify-content").querySelector("label").style.marginTop = "7px";
+    }
+
     // Creates the file Table
     createFileTable(images.toSorted((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
     const table = $("#imageList");
@@ -296,11 +322,6 @@ function listUploadedFiles(files) {
     Array.from(files).forEach(file => {
         const item = document.createElement("div");
         item.className = 'fileItem';
-
-        const fileIcon = document.createElement('i');
-        fileIcon.classList.add('fileIcon');
-        fileIcon.classList.add('far');
-        fileIcon.classList.add('fa-file-image')
 
         const fileName = document.createElement('p');
         fileName.className = 'fileName';
@@ -331,7 +352,6 @@ function listUploadedFiles(files) {
             }
         };
 
-        item.appendChild(fileIcon);
         item.appendChild(fileName);
         item.appendChild(fileSize);
         item.appendChild(deleteBtn);
@@ -381,7 +401,7 @@ function retrieveFiles() {
 
 function createTile(data) {
     // change the class to reflect on actual usage
-    let tile = `<div class="test">${data}</div>`;
+    let tile = `<div class="tile-picture">${data}</div>`;
     $("#tiles").append(tile);
 }
 
@@ -398,6 +418,8 @@ async function loadImages(reloadImages = false) {
         console.error("Error fetching images:", error);
     }
 }
+
+/* Maybe implement different style for Mobile View? */
 function displayImage() {
     const tileHolder = $("#tiles");
     tileHolder.empty();
@@ -410,7 +432,7 @@ function displayImage() {
         imgName.innerHTML = `${element}`;
         const imgElem = document.createElement('img');
         newDiv.classList.add('tile');
-        imgElem.classList.add('test');
+        imgElem.classList.add('tile-picture');
         imgElem.src = `/files/images/${element}`;
 
         newDiv.append(imgElem);
@@ -425,7 +447,7 @@ function displayImage() {
     $('#next').prop('disabled', end >= sortedImages.length);
 
     // resubscribe listeners to images
-    $(".test").click(imageClicked);
+    $(".tile-picture").click(imageClicked);
 }
 function searchImages(filteredImages) {
     const tileHolder = $("#tiles");
@@ -439,7 +461,7 @@ function searchImages(filteredImages) {
         imgName.innerHTML = `${element}`;
         const imgElem = document.createElement('img');
         newDiv.classList.add('tile');
-        imgElem.classList.add('test');
+        imgElem.classList.add('tile-picture');
         imgElem.src = `/files/images/${element}`;
 
         newDiv.append(imgElem);
@@ -454,8 +476,11 @@ function searchImages(filteredImages) {
     $('#next').prop('disabled', end >= filteredImages.length);
 
     // resubscribe listeners to images
-    $(".test").click(imageClicked);
+    $(".tile-picture").click(imageClicked);
 }
+
+/*--------------------------------------------------------------------------------------------------*/
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Click on images
@@ -463,10 +488,12 @@ function imageClicked() {
     $("#popup-image").prop('src', this.src);
     let imageName = this.src.split("/");
     $("#image-desc").html(imageName[imageName.length-1].replaceAll('%20', ' '));
+    $("#popup").css({'display': 'flex'});
     $("#popup").show();
 }
 function hidePopup() {
     $("#image-desc").html('');
+    $("#popup-image").attr('src', '');
     $("#popup").hide();
 }
 
@@ -602,9 +629,11 @@ function createFileTable(fileData) {
 
         // create table data to store file modified date, Note: figure out how to split and fix up the date before displaying
         var tableData = document.createElement('td');
-        tableData.innerHTML = fileData[x].modifiedDate;
-        tableRow.append(tableData);
 
+        const date = new Date(fileData[x].modifiedDate);
+        tableData.innerHTML = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+        tableRow.append(tableData);
+        
         // create table data to store the file size
         var tableData = document.createElement('td');
         tableData.innerHTML = getFileSize(fileData[x].size);
@@ -792,3 +821,11 @@ function getFileSize(fileSize) {
     // return a formatted string
     return `${bytes.toFixed(1)} ${prefixes[index]}`;
 }
+
+function isDeviceMobile() {
+    if (window.matchMedia("(max-width: 800px)").matches) {
+      return true;
+    } else {
+      return false;
+    }
+  }
