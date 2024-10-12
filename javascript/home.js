@@ -435,7 +435,7 @@ function displayImage() {
     tileHolder.empty();
     let imagesDisplayed = [];
 
-    if(isDeviceMobile) {
+    if(isDeviceMobile()) {
         imagesDisplayed = sortedImages;
     }
     else {
@@ -470,7 +470,7 @@ function searchImages(filteredImages) {
     tileHolder.empty();
     let imagesDisplayed = [];
 
-    if(isDeviceMobile) {
+    if(isDeviceMobile()) {
         imagesDisplayed = filteredImages;
     }
     else {
